@@ -21,7 +21,7 @@ RUN go mod download
 COPY . .
 
 # Build the application.
-RUN CGO_ENABLED=0 GOOS=linux go build -o /main .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /main cmd/server/main.go
 
 # Stage 2: Create the runtime image
 FROM alpine:latest
