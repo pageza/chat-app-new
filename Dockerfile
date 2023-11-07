@@ -1,42 +1,28 @@
-# .devcontainer/Dockerfile
-# Use the official Golang image to create a build artifact.
-# This is a multi-stage build. It will first compile your application
-# and then copy the compiled binary into a new Docker image.
+# Use the official Go image as a builder stage.
+FROM golang:1.21.3 AS builder
 
-# Stage 1: Building the code
-FROM golang:1.18 AS builder
-
-# Create a directory for the app.
+# Set the working directory inside the container.
 WORKDIR /app
 
-# Copy the go.mod and go.sum file.
-# This will download and cache your dependencies before building
-# your application source code, which can speed up subsequent builds.
+# Copy the Go Modules manifests and download the dependencies.
 COPY go.mod go.sum ./
-
-# Download all dependencies.
 RUN go mod download
 
 # Copy the rest of the application's code.
-COPY ./cmd/server .
+COPY . .
 
 # Build the application.
-RUN CGO_ENABLED=0 GOOS=linux go build -o /main cmd/server/main.go
+# The '.' at the end specifies the current directory (which is /app) as the build context.
+RUN CGO_ENABLED=0 GOOS=linux go build -o /main ./cmd/server
 
-# Stage 2: Create the runtime image
+# Use a small image for the runtime stage.
 FROM alpine:latest
-
-# Install ca-certificates in case you need HTTPS
 RUN apk add --no-cache ca-certificates
 
-# Set the Current Working Directory inside the container
 WORKDIR /root/
 
 # Copy the binary from the builder stage.
 COPY --from=builder /app/main .
 
-# This port matches the port exposed by the Go application.
-EXPOSE 8080
-
-# Run the binary.
+# This is the runtime command for the container.
 CMD ["/main"]
