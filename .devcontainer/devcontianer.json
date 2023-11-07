@@ -1,0 +1,25 @@
+{
+    "name": "Go Chat App",
+    "build": {
+      "dockerfile": "../Dockerfile",
+      "context": ".."
+    },
+    "settings": { 
+      "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+      "golang.go",
+      "ms-azuretools.vscode-docker",
+      "humao.rest-client",
+      "github.vscode-pull-request-github",
+      "eamodio.gitlens"
+    ],
+    "forwardPorts": [
+      8080,
+      5432, 
+      6379  
+    ],
+    "postCreateCommand": "echo 'Environment setup complete'",
+    "remoteUser": "vscode"
+  }
+  
