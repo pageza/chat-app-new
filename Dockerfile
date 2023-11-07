@@ -18,7 +18,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Copy the rest of the application's code.
-COPY . .
+COPY ./cmd/server .
 
 # Build the application.
 RUN CGO_ENABLED=0 GOOS=linux go build -o /main cmd/server/main.go
@@ -33,7 +33,7 @@ RUN apk add --no-cache ca-certificates
 WORKDIR /root/
 
 # Copy the binary from the builder stage.
-COPY --from=builder /main .
+COPY --from=builder /app/main .
 
 # This port matches the port exposed by the Go application.
 EXPOSE 8080
