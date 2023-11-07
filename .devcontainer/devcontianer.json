@@ -10,7 +10,7 @@
     "extensions": [
       "golang.go",
       "ms-azuretools.vscode-docker",
-      "humao.rest-client",
+      "Postman.postman-for-vscode",
       "github.vscode-pull-request-github",
       "eamodio.gitlens"
     ],

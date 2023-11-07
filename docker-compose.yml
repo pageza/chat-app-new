@@ -1,31 +1,36 @@
-# .devcontainer/docker-compose.yml
 version: '3.8'
+
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ..:/workspace:cached
+    build: .
+    ports:
+      - "8080:8080" # Expose the port your app runs on to the host
     depends_on:
       - db
-      - redis
+      - cache
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres_password
+      - DB_NAME=postgres
+      - REDIS_HOST=cache
+      - REDIS_PORT=6379
 
   db:
     image: postgres:latest
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mydb
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - "5432:5432" # Expose PostgreSQL port to the host (optional)
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist database between container restarts
 
-  redis:
+  cache:
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "6379:6379" # Expose Redis port to the host (optional)
 
 volumes:
-  postgres-data:
+  postgres_data:
